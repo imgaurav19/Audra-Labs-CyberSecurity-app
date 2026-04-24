@@ -30,13 +30,53 @@ export default function LandingPage({ toolComponent }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const searchRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   return (
     <div className="landing-container">
-      {/* Top Navigation / Sign Out */}
+      {/* Top Navigation */}
       <div className="landing-top-nav">
-        <button className="sign-out-btn" onClick={handleSignOut}>
-          SIGN OUT <ArrowRight size={14} />
-        </button>
+        <div className="nav-left">
+          <div className="audra-logo-mini">A/L</div>
+        </div>
+        
+        <div className="nav-center">
+          <div className="search-container">
+            <ScanSearch size={16} className="search-icon" />
+            <input 
+              ref={searchRef}
+              type="text" 
+              placeholder="Search Forensic Archives... (⌘K)" 
+              className="tactical-search"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  document.getElementById('section-08').scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+            />
+          </div>
+        </div>
+
+        <div className="nav-right">
+          <button className="menu-btn" onClick={() => setIsManualOpen(true)}>
+            <Menu size={18} />
+            <span className="menu-label">MENU</span>
+          </button>
+          <button className="sign-out-btn" onClick={handleSignOut}>
+            SIGN OUT <ArrowRight size={14} />
+          </button>
+        </div>
       </div>
 
       {/* Side Scroll Indicator */}
@@ -69,8 +109,11 @@ export default function LandingPage({ toolComponent }) {
       {/* 02: The Mission */}
       <SectionWrapper className="section-centered" id="section-02">
         <h2 className="text-title">The Mission</h2>
-        <p className="text-body-large mt-2">
-          In an era of synthetic media, seeing is no longer believing. We equip journalists and fact-checkers with military-grade AI to unmask digital manipulation.
+        <p className="text-body-large mt-2 max-w-800">
+          In an era of synthetic media, seeing is no longer believing. We equip journalists, independent investigators, and global fact-checkers with military-grade AI to unmask sophisticated digital manipulation before it goes viral.
+        </p>
+        <p className="text-body-large mt-2 max-w-800">
+          Our goal is to restore the "Noise-to-Signal" ratio in the global information ecosystem. By democratizing access to high-end forensic tools, we empower the guardians of truth to verify reality in real-time.
         </p>
       </SectionWrapper>
 
@@ -79,7 +122,10 @@ export default function LandingPage({ toolComponent }) {
         <div className="col-content">
           <h2 className="text-title">The Threat</h2>
           <p className="text-body-large">
-            Deepfakes, splicing, and AI-generated misinformation are proliferating at scale. Traditional verification cannot keep up with generative models.
+            Deepfakes, splicing, and AI-generated misinformation are proliferating at scale. Traditional verification methods—often relying on slow human oversight—cannot keep up with the exponential growth of generative models.
+          </p>
+          <p className="text-body-large mt-2">
+            This "Generative Misinformation" threat bypasses standard filters, spreading across encrypted channels and social networks faster than corrections can be made. Audra Labs provides the defensive layer needed to stop this cycle.
           </p>
         </div>
         <div className="col-visual threat-visual">
@@ -196,24 +242,44 @@ export default function LandingPage({ toolComponent }) {
 
       {/* 13: Case Studies */}
       <SectionWrapper className="section-centered" id="section-13">
-        <h2 className="text-title">Trusted By</h2>
-        <div className="trusted-logos mt-4">
-          <div className="logo-placeholder">Reuters Fact Check</div>
-          <div className="logo-placeholder">AP News</div>
-          <div className="logo-placeholder">Bellingcat</div>
+        <div className="tactical-label">OPERATIONAL PARTNERS</div>
+        <h2 className="text-title">Trusted By Global Newsrooms</h2>
+        <div className="trusted-logos-marquee mt-4">
+          <div className="marquee-content">
+            <div className="logo-placeholder">Reuters Fact Check</div>
+            <div className="logo-placeholder">AP News</div>
+            <div className="logo-placeholder">Bellingcat</div>
+            <div className="logo-placeholder">AFP Fact Check</div>
+            <div className="logo-placeholder">Full Fact</div>
+            <div className="logo-placeholder">BBC Verify</div>
+            {/* Duplicate for infinite loop */}
+            <div className="logo-placeholder">Reuters Fact Check</div>
+            <div className="logo-placeholder">AP News</div>
+            <div className="logo-placeholder">Bellingcat</div>
+            <div className="logo-placeholder">AFP Fact Check</div>
+            <div className="logo-placeholder">Full Fact</div>
+            <div className="logo-placeholder">BBC Verify</div>
+          </div>
         </div>
       </SectionWrapper>
 
       {/* 14: Final Verdict (CTA) */}
       <SectionWrapper className="section-centered footer-section" id="section-14">
-        <ShieldCheck size={64} className="section-icon mb-2" />
-        <h2 className="text-title">Ready for the truth?</h2>
-        <button 
-          className="cta-button mt-3"
-          onClick={() => document.getElementById('section-08').scrollIntoView({ behavior: 'smooth' })}
-        >
-          Start Investigating <ArrowRight size={20} />
-        </button>
+        <div className="cta-cinematic-bg">
+          <div className="scanning-beam-horizontal"></div>
+          <div className="forensic-grid-pattern"></div>
+        </div>
+        <div className="cta-content-wrapper">
+          <ShieldCheck size={80} className="section-icon mb-2 glow-icon" />
+          <h2 className="text-title display-large">Ready for the truth?</h2>
+          <p className="text-body-large mb-3">Join the global network of truth-seekers and journalists.</p>
+          <button 
+            className="cta-button-premium mt-3"
+            onClick={() => document.getElementById('section-08').scrollIntoView({ behavior: 'smooth' })}
+          >
+            START INVESTIGATING <ArrowRight size={20} />
+          </button>
+        </div>
       </SectionWrapper>
 
       {/* Footer */}
@@ -226,15 +292,6 @@ export default function LandingPage({ toolComponent }) {
         >
           <span className="manual-label">OPERATIONAL MANUAL</span>
           <div className="manual-dot"></div>
-        </button>
-
-        <button 
-          className="lab-shortcut-btn"
-          onClick={() => document.getElementById('section-08').scrollIntoView({ behavior: 'smooth' })}
-          title="Go to Interactive Lab"
-        >
-          <span className="manual-label">OPEN LAB</span>
-          <ArrowRight size={16} />
         </button>
       </div>
 

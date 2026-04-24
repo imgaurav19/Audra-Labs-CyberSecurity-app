@@ -106,6 +106,7 @@ a:hover {
   max-width: 1400px;
   margin: 0 auto;
   position: relative;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .section-centered {
@@ -122,6 +123,7 @@ a:hover {
   border-radius: 24px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
 }
+
 /* Theme Overrides */
 [data-theme='black'] {
   --color-bg: #000000;
@@ -132,6 +134,9 @@ a:hover {
   --color-border: #1a1a1a;
   --color-primary: #ffffff;
   --color-btn-text: #000000;
+  --color-hover-bg: rgba(255,255,255,0.05);
+  --color-text-rgb: 255, 255, 255;
+  --color-primary-rgb: 255, 255, 255;
 }
 
 [data-theme='solar'] {
@@ -139,10 +144,13 @@ a:hover {
   --color-bg-panel: #eee8d5;
   --color-bg-alt: #eee8d5;
   --color-text: #657b83;
-  --color-text-muted: #93a1a1;
-  --color-border: #dcd4bb;
+  --color-text-muted: #586e75;
+  --color-border: #000000;
   --color-primary: #cb4b16;
   --color-btn-text: #ffffff;
+  --color-hover-bg: rgba(0,0,0,0.03);
+  --color-text-rgb: 101, 123, 131;
+  --color-primary-rgb: 203, 75, 22;
 }
 
 [data-theme='dark'] {
@@ -154,6 +162,23 @@ a:hover {
   --color-border: #333333;
   --color-primary: #00ff88;
   --color-btn-text: #000000;
+  --color-hover-bg: rgba(255,255,255,0.03);
+  --color-text-rgb: 255, 255, 255;
+  --color-primary-rgb: 0, 255, 136;
+}
+
+[data-theme='light'] {
+  --color-bg: #ffffff;
+  --color-bg-panel: #fafafa;
+  --color-bg-alt: #f5f5f7;
+  --color-text: #000000;
+  --color-text-muted: #6e6e73;
+  --color-border: #000000;
+  --color-primary: #000000;
+  --color-btn-text: #ffffff;
+  --color-hover-bg: rgba(0,0,0,0.02);
+  --color-text-rgb: 0, 0, 0;
+  --color-primary-rgb: 0, 0, 0;
 }
 
 /* Ensure root background follows theme */
