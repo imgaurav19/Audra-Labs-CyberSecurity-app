@@ -5,14 +5,27 @@
 }
 
 .upload-zone {
-  border: 1px dashed var(--color-border-hover);
+  position: relative;
+  width: 100%;
+  border: 1.5px dashed var(--color-border);
   border-radius: 20px;
-  padding: 5rem 2rem;
+  padding: 6rem 2rem;
   text-align: center;
-  background-color: var(--color-bg);
-  transition: all 0.3s ease;
+  background: linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)), 
+              url('https://picsum.photos/seed/audra_terminal_7/1200/800');
+  background-size: cover;
+  background-position: center;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+  cursor: pointer;
+}
+
+[data-theme='dark'] .upload-zone,
+[data-theme='black'] .upload-zone {
+  background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), 
+              url('https://picsum.photos/seed/audra_terminal_7/1200/800');
+  background-size: cover;
 }
 
 .upload-zone:hover {

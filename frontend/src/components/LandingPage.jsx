@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ShieldCheck, Activity, BrainCircuit, Globe, Lock, ArrowRight, ScanSearch } from 'lucide-react';
+import { ShieldCheck, Activity, BrainCircuit, Globe, Lock, ArrowRight, ScanSearch, Menu } from 'lucide-react';
 import SectionWrapper from './SectionWrapper';
 import Pricing from './Pricing';
 import Team from './Team';
@@ -46,18 +46,19 @@ export default function LandingPage({ toolComponent }) {
   return (
     <div className="landing-container">
       {/* Top Navigation */}
+      {/* Top Navigation */}
       <div className="landing-top-nav">
         <div className="nav-left">
           <div className="audra-logo-mini">A/L</div>
         </div>
-        
-        <div className="nav-center">
+
+        <div className="nav-right">
           <div className="search-container">
             <ScanSearch size={16} className="search-icon" />
             <input 
               ref={searchRef}
               type="text" 
-              placeholder="Search Forensic Archives... (⌘K)" 
+              placeholder="Search Archives... (⌘K)" 
               className="tactical-search"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
@@ -66,9 +67,6 @@ export default function LandingPage({ toolComponent }) {
               }}
             />
           </div>
-        </div>
-
-        <div className="nav-right">
           <button className="menu-btn" onClick={() => setIsManualOpen(true)}>
             <Menu size={18} />
             <span className="menu-label">MENU</span>
@@ -133,19 +131,15 @@ export default function LandingPage({ toolComponent }) {
         </div>
       </SectionWrapper>
 
-      {/* 04: The Core */}
-      <SectionWrapper className="section-centered" id="section-04">
-        <BrainCircuit size={48} className="section-icon" />
-        <h2 className="text-title">Powered by Gemini 1.5 Pro</h2>
-        <p className="text-body-large max-w-800 mx-auto mt-2">
-          Our core intelligence engine utilizes state-of-the-art multimodal reasoning to detect compression artifacts, lighting anomalies, and AI-generation signatures.
-        </p>
-      </SectionWrapper>
 
       {/* 05: Step 1 - Ingest */}
       <SectionWrapper className="two-col-reverse" id="section-05">
         <div className="col-visual ingest-visual">
-          <div className="wireframe-box">Drop Media</div>
+          <img 
+            src="https://picsum.photos/seed/audra_ingest_7/800/500" 
+            alt="Forensic Ingest" 
+            className="step-visual-img"
+          />
         </div>
         <div className="col-content">
           <h3 className="step-label">Step 01</h3>
@@ -309,26 +303,35 @@ export default function LandingPage({ toolComponent }) {
             <div className="notion-style-content">
               <div className="ns-header">
                 <span className="ns-emoji">📄</span>
-                <h2 className="ns-title">Audra Labs: Manual</h2>
+                <h2 className="ns-title">Audra Labs: Operational Manual</h2>
               </div>
               <div className="ns-body">
-                <p>Welcome to the <strong>Audra Labs</strong> Forensic Interface. This environment is designed for real-time detection of synthetic media and deepfake artifacts.</p>
-                
-                <h3>Operational Protocol</h3>
-                <p>Ingest suspicious media into the <strong>Interactive Lab</strong>. Our system utilizes Gemini 1.5 Pro to conduct a multi-modal scan, generating a verifiable forensic report.</p>
-                
-                <h3>Key Security Tiers</h3>
+                <h3>01: How It Works</h3>
+                <p>Audra Labs utilizes multi-modal neural networks to analyze media assets in real-time. Our engine scans for temporal inconsistencies, lighting deviations, and GAN-specific neural signatures.</p>
                 <ul>
-                  <li><strong>Layer 01:</strong> Error Level Analysis (ELA) for compression artifacts.</li>
-                  <li><strong>Layer 02:</strong> Lighting & Shadow consistency verification.</li>
-                  <li><strong>Layer 03:</strong> Neural signature detection for known LLM/GenAI models.</li>
+                  <li><strong>Ingest:</strong> Secure drag-and-drop or encrypted URL import.</li>
+                  <li><strong>Scan:</strong> Pixel-by-pixel Error Level Analysis (ELA).</li>
+                  <li><strong>Verdict:</strong> Verifiable forensic report with confidence scoring.</li>
                 </ul>
                 
-                <p><em>Note: All data is processed in a zero-knowledge environment. No assets are stored on our servers after the session expires.</em></p>
+                <h3>02: Data Security & Privacy</h3>
+                <p><strong>ZERO DATA LEAK POLICY:</strong> We operate on a zero-knowledge architecture. All uploaded media is processed in volatile memory and immediately purged upon session termination.</p>
+                <ul>
+                  <li>No assets are stored on our servers post-analysis.</li>
+                  <li>No user data is used for model training.</li>
+                  <li>All transmissions are secured via TLS 1.3 & AES-256.</li>
+                </ul>
+                
+                <h3>03: Terms & Conditions</h3>
+                <p>By accessing the Audra Labs terminal, you agree to utilize these forensic tools for verification and truth-seeking purposes only. Commercial exploitation of generative detection results is subject to enterprise licensing.</p>
+                
+                <h3>04: Privacy Policy</h3>
+                <p>We do not track operative identities. Your IP address and metadata are stripped at the edge layer. We collect only anonymized telemetry to optimize detection accuracy across the network.</p>
                 
                 <div className="ns-footer">
                   <p>Clearance: Class-3 Operative</p>
                   <p>Terminal: Node-07 [Active]</p>
+                  <p>© 2024 Audra Labs · Forensic Intelligence</p>
                 </div>
               </div>
             </div>

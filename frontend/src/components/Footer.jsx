@@ -3,7 +3,12 @@ import { ScanSearch, Mail, MapPin, Phone, ArrowUpRight, Fingerprint } from 'luci
 import './Footer.css';
 
 export default function Footer() {
-  const [theme, setTheme] = React.useState(localStorage.getItem('audra_theme') || 'dark');
+  const [theme, setTheme] = React.useState(localStorage.getItem('audra_theme') || 'light');
+
+  React.useEffect(() => {
+    // Apply initial theme
+    document.documentElement.setAttribute('data-theme', theme);
+  }, []);
 
   const changeTheme = (newTheme) => {
     document.documentElement.setAttribute('data-theme', newTheme);

@@ -10,6 +10,16 @@
   font-family: 'Inter', sans-serif;
 }
 
+/* Immediate hide for authenticated users to prevent flicker */
+.auth-active #generatorScreen,
+.auth-active #loginScreen {
+  display: none !important;
+}
+
+.auth-active #root {
+  display: block !important;
+}
+
 .fh-container.fade-out {
   opacity: 0;
   transform: scale(0.98);
@@ -98,16 +108,16 @@
 
 /* Col 1 */
 .fh-col-1 {
-  flex: 1.2;
+  flex: 1.1;
 }
 .fh-title-large {
-  font-size: 4.5rem;
+  font-size: 3.2rem;
   font-weight: 500;
   line-height: 1.1;
   letter-spacing: -0.03em;
   color: #000;
   margin-top: 1rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
   text-transform: none;
 }
 .fh-actions {
@@ -119,12 +129,14 @@
   background: #111;
   color: #fff;
   border: none;
-  padding: 1rem 1.5rem;
-  font-size: 0.8rem;
+  padding: 0.9rem 2.5rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   cursor: pointer;
+  min-width: 180px;
+  line-height: 1.4;
 }
 .fh-btn-text {
   background: none;
@@ -151,7 +163,7 @@
   height: 60%;
 }
 .fh-img-card.short {
-  height: 40%;
+  height: 45%;
 }
 .fh-img-card span {
   font-size: 0.8rem;

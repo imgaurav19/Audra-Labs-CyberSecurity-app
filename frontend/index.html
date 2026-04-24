@@ -7,7 +7,14 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/src/login-page.css">
+<link rel="stylesheet" href="/src/login-page.css">
 <link rel="stylesheet" href="/src/generator-page.css">
+<script>
+  // Immediate Auth Check to prevent flicker
+  if (localStorage.getItem('audra_auth') === 'true') {
+    document.documentElement.classList.add('auth-active');
+  }
+</script>
 </head>
 <body>
 
@@ -40,26 +47,26 @@
         </div>
         <div class="fh-img-card short" style="margin-top: 4rem;">
           <span>@audra.operative</span>
-          <img src="https://picsum.photos/seed/audra1/400/600" alt="Model portrait 1">
+          <img src="https://picsum.photos/seed/audra_main_1/400/600" alt="Model portrait 1">
         </div>
       </div>
       <div class="fh-col fh-col-2">
         <div class="fh-img-card tall" style="margin-top: auto;">
           <span>@digital.agent</span>
-          <img src="https://picsum.photos/seed/audra2/400/600" alt="Model portrait 2">
+          <img src="https://picsum.photos/seed/audra_focus_2/400/600" alt="Model portrait 2">
         </div>
       </div>
       <div class="fh-col fh-col-3">
         <p class="fh-desc">Discover stunning, AI-generated visuals tailored to your aesthetic. No more searching through endless stock—just pure creative alignment.</p>
         <div class="fh-img-card" style="height: 65%;">
           <span>@forensic.model</span>
-          <img src="https://picsum.photos/seed/audra3/400/600" alt="Model portrait 3">
+          <img src="https://picsum.photos/seed/audra_visual_3/400/600" alt="Model portrait 3">
         </div>
       </div>
       <div class="fh-col fh-col-4">
         <div class="fh-img-card" style="height: 45%;">
           <span>@intelligence.hub</span>
-          <img src="https://picsum.photos/seed/audra4/400/600" alt="Model portrait 4">
+          <img src="https://picsum.photos/seed/audra_tech_4/400/600" alt="Model portrait 4">
         </div>
       </div>
     </div>

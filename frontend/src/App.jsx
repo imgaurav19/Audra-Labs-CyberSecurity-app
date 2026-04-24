@@ -45,17 +45,50 @@ function App() {
         setAnalysisLogs(prev => [...prev, logSteps[i]]);
       }
 
-      // Simulated Forensic Result
+      // Dynamic Forensic Simulation Engine
+      const isLikelyFake = Math.random() > 0.3; // 70% chance of manipulation for demo impact
+      const dynamicScore = (85 + Math.random() * 12).toFixed(1);
+      
+      const profiles = [
+        {
+          verdict: "MANIPULATED",
+          summary: `ELA scan revealed significant pixel variance in the central facial region. Lighting vectors show a ${ (10 + Math.random() * 10).toFixed(1) }° deviation from the established environmental light source.`,
+          techniques: ["Neural Signature Match", "Lighting Inconsistency"],
+          regions: [
+            { region: "Facial T-Zone", severity: "high", description: "Compression noise floor deviation detected." },
+            { region: "Shadow Geometry", severity: "medium", description: "Inconsistent shadow cast vectors." }
+          ]
+        },
+        {
+          verdict: "MANIPULATED",
+          summary: "GAN-specific neural signatures detected in texture gradients. Frequency analysis shows synthetic repeating patterns in complex backgrounds.",
+          techniques: ["Texture Gradient Scan", "Frequency Domain Analysis"],
+          regions: [
+            { region: "Background Gradients", severity: "high", description: "Synthetic repeating patterns detected." },
+            { region: "Edge Contrast", severity: "medium", description: "Unnatural sharpening artifacts on subject borders." }
+          ]
+        },
+        {
+          verdict: "VERIFIED",
+          summary: "No significant forensic anomalies detected. Metadata hash matches original acquisition profile. Lighting and shadow geometry are mathematically consistent with environmental light sources.",
+          techniques: ["Metadata Integrity Check", "Geometric Lighting Scan"],
+          regions: [
+            { region: "Global Canvas", severity: "low", description: "Consistent noise floor across all quadrants." }
+          ]
+        }
+      ];
+
+      const selectedProfile = isLikelyFake ? profiles[Math.floor(Math.random() * 2)] : profiles[2];
+      
       const simulationResult = {
-        verdict: "MANIPULATED",
-        confidenceScore: 92.8,
-        summary: "Multi-modal analysis confirms high-probability manipulation. ELA scan revealed significant pixel variance in the central facial region. Lighting vectors show a 12° deviation from the established environmental light source, consistent with a generative face-swap or augmentation.",
-        techniques: ["Neural Signature Match", "Lighting Inconsistency", "Pixel Artifacting"],
-        suspiciousRegions: [
-          { region: "Facial T-Zone", severity: "high", description: "Compression noise does not match the background noise floor." },
-          { region: "Shadow Geometry", severity: "medium", description: "Cast shadows are mathematically inconsistent with primary light source." }
-        ],
-        recommendations: "Proceed with caution. Media exhibits signatures of advanced generative augmentation. Highly recommended to verify source origin."
+        verdict: selectedProfile.verdict,
+        confidenceScore: isLikelyFake ? dynamicScore : (94 + Math.random() * 4).toFixed(1),
+        summary: selectedProfile.summary,
+        techniques: selectedProfile.techniques,
+        suspiciousRegions: selectedProfile.regions,
+        recommendations: isLikelyFake 
+          ? "Proceed with caution. Media exhibits signatures of advanced generative augmentation." 
+          : "Media appears authentic based on current forensic parameters."
       };
       
       setResult(simulationResult);

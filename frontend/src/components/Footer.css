@@ -99,7 +99,7 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 3rem;
   }
-  
+
   .brand-col {
     grid-column: span 2;
   }
@@ -109,7 +109,7 @@
   .footer-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .brand-col {
     grid-column: span 1;
   }
@@ -259,15 +259,15 @@
   .footer-newsletter {
     padding: 4rem 1.5rem;
   }
-  
+
   .newsletter-content h2 {
     font-size: 1.75rem;
   }
-  
+
   .newsletter-form {
     flex-direction: column;
   }
-  
+
   .footer-bottom-content {
     flex-direction: column;
     text-align: center;
@@ -295,8 +295,8 @@
 }
 
 .theme-opt {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: #fff;
   padding: 0.4rem 0.8rem;
   font-family: 'Share Tech Mono', monospace;
@@ -307,8 +307,8 @@
 }
 
 .theme-opt:hover {
-  background: rgba(255,255,255,0.1);
-  border-color: rgba(255,255,255,0.3);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .theme-opt.active {
@@ -317,6 +317,20 @@
   border-color: #fff;
 }
 
-.theme-opt.black.active { background: #000; color: #fff; border-color: #333; }
-.theme-opt.solar.active { background: #fdf6e3; color: #657b83; border-color: #eee8d5; }
-.theme-opt.dark.active { background: #111; color: #00ff88; border-color: #00ff88; }
+.theme-opt.black.active {
+  background: #000;
+  color: #fff;
+  border-color: #333;
+}
+
+.theme-opt.solar.active {
+  background: #fdf6e3;
+  color: #657b83;
+  border-color: #eee8d5;
+}
+
+.theme-opt.dark.active {
+  background: #111;
+  color: #00ff88;
+  border-color: #00ff88;
+}
