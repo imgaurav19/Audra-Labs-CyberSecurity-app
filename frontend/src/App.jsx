@@ -45,9 +45,9 @@ function App() {
         setAnalysisLogs(prev => [...prev, logSteps[i]]);
       }
 
-      // Dynamic Forensic Simulation Engine
-      const isLikelyFake = Math.random() > 0.3; // 70% chance of manipulation for demo impact
-      const dynamicScore = (85 + Math.random() * 12).toFixed(1);
+      // Dynamic Forensic Simulation Engine (DEMO MODE: always shows MANIPULATED for pitch)
+      const isLikelyFake = true; // Set to Math.random() > 0.3 for random mode
+      const dynamicScore = (88 + Math.random() * 9).toFixed(1); // 88-97% range
       
       const profiles = [
         {

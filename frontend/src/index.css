@@ -215,15 +215,169 @@ html, body, #root {
   transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-/* ══════ MODERN COMMAND HEADER ══════ */
-.manual-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  backdrop-filter: blur(4px);
-  z-index: 100001;
+/* ══════ VERDICT SAMPLE CARD ══════ */
+.sample-verdict-card {
+  width: 100%;
+  max-width: 500px;
+  background: var(--color-bg-panel);
+  border: 1px solid var(--color-border);
+  padding: 1.5rem;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+  transform: rotate(-2deg);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sample-verdict-card:hover {
+  transform: rotate(0deg) translateY(-10px);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.2);
+}
+
+.verdict-card-header {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--color-danger);
+  margin-bottom: 1.5rem;
+  font-weight: 800;
+}
+
+.verdict-score-row {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.score-value {
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  color: var(--color-text);
+}
+
+.score-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0.1em;
+}
+
+.sample-report-img {
+  width: 100%;
+  border-radius: 8px;
+  filter: grayscale(100%) brightness(0.9);
+  transition: all 0.5s ease;
+}
+
+.sample-verdict-card:hover .sample-report-img {
+  filter: grayscale(0%) brightness(1);
+}
+
+/* ══════ TACTICAL SECTION DIVIDER ══════ */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 4rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.divider-line {
+  flex-grow: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--color-border), transparent);
+}
+
+.divider-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--color-primary);
+  letter-spacing: 0.4em;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ══════ GLOBAL INTELLIGENCE FEED ══════ */
+.intel-feed-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  background: #000;
+  border-radius: 12px;
+  padding: 1.5rem;
+  font-family: 'Share Tech Mono', monospace;
+  box-shadow: inset 0 0 20px rgba(0, 255, 136, 0.05);
+  border: 1.5px solid #1a1a1a;
+}
+
+.intel-row {
+  display: grid;
+  grid-template-columns: 100px 80px 1fr;
+  gap: 1.5rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #111;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.intel-row:last-child { border-bottom: none; }
+
+.intel-time { color: rgba(255,255,255,0.4); }
+
+.intel-status {
+  font-weight: 800;
+  padding: 0.1rem 0.4rem;
+  border-radius: 2px;
+  text-align: center;
+}
+
+.status-alert { background: rgba(255, 59, 48, 0.15); color: #ff3b30; }
+.status-verify { background: rgba(0, 255, 136, 0.15); color: #00ff88; }
+.status-scan { background: rgba(0, 122, 255, 0.15); color: #007aff; }
+
+.intel-msg { color: rgba(255,255,255,0.8); }
+
+[data-theme='light'] .intel-feed-container {
+  background: #f8f9fa;
+  border-color: #e9ecef;
+  box-shadow: none;
+}
+
+[data-theme='light'] .intel-row { border-color: #eee; }
+[data-theme='light'] .intel-time { color: #888; }
+[data-theme='light'] .intel-msg { color: #333; }
+
+@keyframes scanVertical {
+  0% { top: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.data-overlay-pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  color: var(--color-primary);
+  filter: drop-shadow(0 0 10px var(--color-primary));
+  animation: pulseGlow 2s infinite;
+}
+
+.step-visual-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.analysis-graph-container:hover .step-visual-img {
+  transform: scale(1.05);
 }
 
 .landing-top-nav {

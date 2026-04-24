@@ -11,7 +11,22 @@ import './LandingPage.css';
 export default function LandingPage({ toolComponent }) {
   const [isManualOpen, setIsManualOpen] = React.useState(false);
   const [activeIdx, setActiveIdx] = React.useState(0);
+  const globalHubs = [
+    'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=800&auto=format&fit=crop', // NYC
+    'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=800&auto=format&fit=crop', // London
+    'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=800&auto=format&fit=crop', // Tokyo
+    'https://images.unsplash.com/photo-1467226632440-65f0b49574f9?q=80&w=800&auto=format&fit=crop', // Singapore
+    'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=800&auto=format&fit=crop'  // Chicago
+  ];
+  const [scaleIdx, setScaleIdx] = React.useState(0);
   const dashCount = 20;
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setScaleIdx(prev => (prev + 1) % globalHubs.length);
+    }, 12000); // Rotate every 12s
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSignOut = () => {
     localStorage.removeItem('audra_auth');
@@ -127,7 +142,45 @@ export default function LandingPage({ toolComponent }) {
           </p>
         </div>
         <div className="col-visual threat-visual">
-           <div className="abstract-glitch"></div>
+          <div className="threat-img-container">
+            <img 
+              src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop"
+              alt="The Threat - Digital Manipulation"
+              className="threat-img"
+            />
+            <div className="threat-overlay"></div>
+            <div className="threat-label">THREAT DETECTED</div>
+          </div>
+        </div>
+      </SectionWrapper>
+
+      {/* 03.5: Intelligence Feed */}
+      <SectionWrapper className="bg-alt" id="section-intel">
+        <div className="section-centered">
+          <div className="tactical-label">GLOBAL INTELLIGENCE FEED</div>
+          <h2 className="text-title">Active Counter-Measures</h2>
+          <div className="intel-feed-container premium-card mt-3">
+             <div className="intel-row">
+               <span className="intel-time">[08:42:15]</span>
+               <span className="intel-status status-alert">ALERT</span>
+               <span className="intel-msg">Synthetic video detected in Southeast Asian election cycle. Deepfake suppressed.</span>
+             </div>
+             <div className="intel-row">
+               <span className="intel-time">[08:31:04]</span>
+               <span className="intel-status status-verify">VERIFY</span>
+               <span className="intel-msg">Reuters Fact Check: Satellite imagery confirmed authentic via metadata hash.</span>
+             </div>
+             <div className="intel-row">
+               <span className="intel-time">[08:15:22]</span>
+               <span className="intel-status status-scan">SCAN</span>
+               <span className="intel-msg">Batch scan complete: 4,200 assets analyzed. Neural signatures: 0.04% variance.</span>
+             </div>
+             <div className="intel-row">
+               <span className="intel-time">[07:58:49]</span>
+               <span className="intel-status status-alert">ALERT</span>
+               <span className="intel-msg">Coordinated generative misinformation campaign identified in Eastern Europe.</span>
+             </div>
+          </div>
         </div>
       </SectionWrapper>
 
@@ -160,18 +213,54 @@ export default function LandingPage({ toolComponent }) {
           </p>
         </div>
         <div className="col-visual analyze-visual">
-          <Activity size={100} className="pulse-icon" />
+          <div className="analysis-graph-container">
+            <img 
+              src="https://picsum.photos/seed/audra_analysis_9/800/500" 
+              alt="Neural Analysis" 
+              className="step-visual-img"
+            />
+            <div className="scanning-beam"></div>
+            <div className="data-overlay-pulse">
+              <Activity size={40} className="pulse-icon-mini" />
+            </div>
+          </div>
         </div>
       </SectionWrapper>
 
       {/* 07: Step 3 - Verdict */}
-      <SectionWrapper className="section-centered" id="section-07">
-        <h3 className="step-label">Step 03</h3>
-        <h2 className="text-title">The Verdict</h2>
-        <p className="text-body-large max-w-800 mx-auto mt-2">
-          A definitive, plain-English forensic report. Clear confidence scores, highlighted suspicious regions, and actionable next steps.
-        </p>
+      <SectionWrapper className="two-col-reverse" id="section-07">
+        <div className="col-visual verdict-visual">
+          <div className="sample-verdict-card premium-card">
+            <div className="verdict-card-header">
+               <ShieldCheck size={24} className="glow-icon" />
+               <span>FORENSIC VERDICT: MANIPULATED</span>
+            </div>
+            <div className="verdict-score-row">
+              <span className="score-value">94.8%</span>
+              <span className="score-label">CONFIDENCE SCORE</span>
+            </div>
+            <img 
+              src="https://picsum.photos/seed/audra_verdict_7/600/350" 
+              alt="Sample Forensic Report" 
+              className="sample-report-img"
+            />
+          </div>
+        </div>
+        <div className="col-content">
+          <h3 className="step-label">Step 03</h3>
+          <h2 className="text-title">The Verdict</h2>
+          <p className="text-body-large">
+            A definitive, plain-English forensic report. Clear confidence scores, highlighted suspicious regions, and actionable next steps.
+          </p>
+        </div>
       </SectionWrapper>
+
+      {/* Tactical Divider */}
+      <div className="section-divider">
+        <div className="divider-line"></div>
+        <div className="divider-tag">DETECTION VECTORS</div>
+        <div className="divider-line"></div>
+      </div>
 
       {/* 07.5: Carousel Showcase */}
       <SectionWrapper className="section-centered bg-alt" id="section-showcase" style={{ padding: '2rem 0 4rem 0', maxWidth: '100%' }}>
@@ -202,9 +291,16 @@ export default function LandingPage({ toolComponent }) {
             Built on a serverless architecture designed for high-throughput newsrooms. Analyze thousands of images per hour with zero latency degradation.
           </p>
         </div>
-        <div className="col-visual scale-visual">
-           <div className="grid-overlay"></div>
-        </div>
+         <div className="col-visual scale-visual">
+            <img 
+              src={globalHubs[scaleIdx]} 
+              alt="Global Intelligence" 
+              className="step-visual-img"
+              key={scaleIdx}
+            />
+            <div className="grid-overlay"></div>
+            <div className="scanning-beam"></div>
+         </div>
       </SectionWrapper>
 
       {/* 10: Pricing */}
