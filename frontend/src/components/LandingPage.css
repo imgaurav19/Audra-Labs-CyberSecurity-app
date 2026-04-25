@@ -247,8 +247,6 @@
   padding-bottom: 6rem;
 }
 
-.lab-header {
-
   /* Operational Manual Trigger */
   .manual-trigger-btn {
     position: fixed;
@@ -500,7 +498,6 @@
     color: var(--color-primary);
     transform: translateX(5px);
   }
-  }
 
   .dropdown-item-tactical.logout {
     background: transparent;
@@ -630,7 +627,6 @@
     text-transform: uppercase;
     letter-spacing: 0.1em;
   }
-}
 
 .lab-container {
   max-width: 1200px;
