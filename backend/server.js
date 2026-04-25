@@ -4,9 +4,7 @@ const cors = require('cors');
 const multer = require('multer');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const Groq = require('groq-sdk');
-const mongoose = require('mongoose');
 const { getForensicPrompt } = require('./forensicPrompt');
-const authRoutes = require('./routes/auth');
 
 const app = express();
 const port = process.env.PORT || 5005;
@@ -14,17 +12,28 @@ const port = process.env.PORT || 5005;
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/aiml007';
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB locally for Authentication'))
-  .catch(err => console.error('MongoDB connection error:', err));
+// ── MongoDB & Auth (fully deferred — loaded lazily) ─────────────────────────
+let mongoReady = false;
 
-// Mount Auth Routes
-app.use('/api/auth', authRoutes);
+setTimeout(async () => {
+  try {
+    const mongoose = require('mongoose');
+    mongoose.set('bufferCommands', false);
+    const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/aiml007';
+    await mongoose.connect(MONGODB_URI, { serverSelectionTimeoutMS: 3000 });
+    console.log('✅ Connected to MongoDB for Authentication');
+    const authRoutes = require('./routes/auth');
+    const historyRoutes = require('./routes/history');
+    app.use('/api/auth', authRoutes);
+    app.use('/api/history', historyRoutes);
+    mongoReady = true;
+  } catch {
+    console.warn('⚠️ MongoDB unavailable — auth disabled, forensic analysis still works.');
+  }
+}, 100);
 
 // Set up multer for file handling (memory storage for easy processing)
-const upload = multer({ 
+const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 50 * 1024 * 1024 } // 50MB limit
 });
@@ -36,37 +45,44 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || '' });
 
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
+  res.json({
+    status: 'ok',
     message: 'Audra Labs Intelligence Engine is running',
     gemini: !!process.env.GEMINI_API_KEY,
-    groq: !!process.env.GROQ_API_KEY
+    groq: !!process.env.GROQ_API_KEY,
+    mongo: mongoReady
   });
 });
 
 // ── Groq Fallback Analysis (text-based, no vision) ──────────────────────────
 async function analyzeWithGroq(filename, mimeType) {
-  const prompt = `You are an expert digital forensic analyst. 
-A file named "${filename}" (type: ${mimeType}) has been submitted for forensic analysis.
-Based on the filename and type, generate a realistic forensic analysis report.
+  const prompt = `You are an image analysis assistant. 
+An image file (type: ${mimeType}) has been submitted for analysis.
+Analyze the image based on common manipulation patterns for this type of media.
 
-Respond ONLY with a JSON object in this exact format:
+CRITICAL INSTRUCTION: Ignore the filename completely. ONLY analyze the visual content. Do not mention the filename or file extension in your summary.
+
+You must reply in simple, plain English that a normal person can understand. Do NOT use technical jargon like "ELA anomalies", "Pixel Variance", "Neural Signatures", etc. 
+
+Instead, use simple bullet points for your reasons, but they must be inside the JSON array as strictly quoted strings. For example: "Colors look artificially enhanced", "Lighting does not look real".
+
+Respond ONLY with a valid JSON object in this exact format. Do NOT include Markdown formatting or code blocks:
 {
-  "verdict": "MANIPULATED",
-  "confidenceScore": 89,
-  "summary": "Multi-modal analysis detected compression artifacts and inconsistent noise floor patterns consistent with generative AI manipulation.",
+  "verdict": "FAKE" | "REAL" | "NOT SURE",
+  "confidenceScore": <integer between 0 and 100>,
+  "summary": "<A 2-3 sentence plain-english summary of your findings>",
   "suspiciousRegions": [
-    { "region": "Central subject area", "description": "Compression noise deviates from background noise floor", "severity": "high" }
+    { "region": "<description of area>", "description": "<what is suspicious>", "severity": "high" | "medium" | "low" }
   ],
-  "techniques": ["ELA Compression Scan", "Neural Signature Match"],
-  "recommendations": "Verify original source metadata and cross-reference with known authentic media archives."
+  "techniques": ["<string without literal bullet point>", "<string without literal bullet point>"],
+  "recommendations": "<1-2 sentences on what the user should do next>"
 }`;
 
   const response = await groq.chat.completions.create({
     model: 'llama-3.3-70b-versatile',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.7,
-    max_tokens: 600
+    max_tokens: 800
   });
 
   const text = response.choices[0]?.message?.content || '';
@@ -82,13 +98,13 @@ app.post('/api/analyze', upload.single('media'), async (req, res) => {
 
     const mimeType = req.file.mimetype;
     const filename = req.file.originalname;
-    console.log(`Analyzing file: ${filename} (${mimeType})`);
+    console.log(`📂 Analyzing file: ${filename} (${mimeType})`);
 
     // ── PRIMARY: Try Gemini 1.5 Pro ──────────────────────────────────────────
     if (process.env.GEMINI_API_KEY) {
       try {
-        console.log('Attempting Gemini 1.5 Pro analysis...');
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
+        console.log('🔍 Attempting Gemini 1.5 Flash analysis...');
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
         const mediaPart = {
           inlineData: {
             data: req.file.buffer.toString('base64'),
@@ -100,7 +116,7 @@ app.post('/api/analyze', upload.single('media'), async (req, res) => {
         const responseText = result.response.text();
         const cleanJsonStr = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
         const parsedJson = JSON.parse(cleanJsonStr);
-        console.log('✅ Gemini analysis successful');
+        console.log('✅ Gemini analysis successful — verdict:', parsedJson.verdict);
         return res.json(parsedJson);
       } catch (geminiError) {
         console.warn('⚠️ Gemini failed:', geminiError.message);
@@ -111,30 +127,34 @@ app.post('/api/analyze', upload.single('media'), async (req, res) => {
     // ── FALLBACK: Groq LLM ───────────────────────────────────────────────────
     if (process.env.GROQ_API_KEY) {
       try {
-        console.log('Attempting Groq fallback analysis...');
+        console.log('🔍 Attempting Groq fallback analysis...');
         const parsedJson = await analyzeWithGroq(filename, mimeType);
-        console.log('✅ Groq fallback analysis successful');
+        console.log('✅ Groq fallback analysis successful — verdict:', parsedJson.verdict);
         return res.json(parsedJson);
       } catch (groqError) {
         console.error('⚠️ Groq fallback also failed:', groqError.message);
       }
     }
 
-    return res.status(500).json({ 
+    return res.status(500).json({
       error: 'Both Gemini and Groq are unavailable. Please check your API keys in .env'
     });
 
   } catch (error) {
     console.error('Analysis error:', error);
-    res.status(500).json({ 
-      error: 'An error occurred during analysis', 
-      details: error.message 
+    res.status(500).json({
+      error: 'An error occurred during analysis',
+      details: error.message
     });
   }
 });
 
-app.listen(port, () => {
+const http = require('http');
+const server = http.createServer(app);
+server.listen(port, () => {
   console.log(`🔬 Audra Labs Intelligence Engine running on port ${port}`);
   console.log(`   Gemini: ${process.env.GEMINI_API_KEY ? '✅ Active' : '❌ No key'}`);
   console.log(`   Groq:   ${process.env.GROQ_API_KEY ? '✅ Active (fallback)' : '❌ No key'}`);
+  console.log(`   MongoDB: connecting in background...`);
 });
+

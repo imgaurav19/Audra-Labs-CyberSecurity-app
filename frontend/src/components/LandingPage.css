@@ -122,18 +122,44 @@
   color: var(--color-primary);
 }
 
+.hover-char:hover {
+  color: var(--color-primary);
+  text-shadow: 0 0 15px rgba(var(--color-primary-rgb), 0.6);
+  transform: translateY(-2px);
+}
+
+.rainbow-text {
+  background: linear-gradient(
+    to right, 
+    #ff3b30, #ff9500, #ffcc00, #4cd964, #5ac8fa, #007aff, #5856d6, #ff2d55
+  );
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbow-move 8s linear infinite;
+  font-weight: 900 !important;
+  border: 1px solid rgba(var(--color-text-rgb), 0.1) !important;
+}
+
+@keyframes rainbow-move {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 .audra-bookmark {
   display: inline-block;
-  padding: 0.25rem 0.75rem;
-  background-color: var(--color-bg-alt);
+  padding: 0.25rem 1rem;
+  background-color: rgba(var(--color-text-rgb), 0.03);
   border: 1px solid var(--color-border);
   border-radius: 99px;
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--color-text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-top: 1rem;
+  letter-spacing: 0.1em;
+  margin-top: 1.5rem;
+  backdrop-filter: blur(10px);
 }
 
 .step-label {
@@ -449,6 +475,72 @@
     box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
   }
 
+  .dropdown-item-tactical {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    width: 100%;
+    padding: 1.25rem 0;
+    background: transparent !important;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    text-align: left;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.3rem;
+    font-weight: 900;
+    transition: all 0.2s ease;
+    border-radius: 0;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .dropdown-item-tactical:hover {
+    background: transparent !important;
+    color: var(--color-primary);
+    transform: translateX(5px);
+  }
+  }
+
+  .dropdown-item-tactical.logout {
+    background: transparent;
+    margin-top: 1rem;
+    justify-content: center;
+    border-radius: 8px;
+    font-weight: 900;
+    color: #ff3b30;
+  }
+
+  .dropdown-item-tactical.logout:hover {
+    background: transparent;
+    color: #ff3b30;
+    transform: scale(1.05);
+    padding-left: 0.75rem;
+  }
+
+  .dropdown-item-tactical.coming-soon {
+    opacity: 0.6;
+    cursor: default;
+    position: relative;
+  }
+
+  .dropdown-item-tactical.coming-soon:hover {
+    background: transparent;
+    color: var(--color-text);
+    padding-left: 0.75rem;
+  }
+
+  .cs-tag {
+    margin-left: auto;
+    font-size: 0.5rem;
+    padding: 0.2rem 0.4rem;
+    background: rgba(var(--color-text-rgb), 0.1);
+    border: 1px solid rgba(var(--color-text-rgb), 0.2);
+    border-radius: 3px;
+    color: var(--color-text-muted);
+    font-weight: 900;
+  }
+
   /* Side Navigation Dashes (React Version) */
   .landing-side-nav {
     position: fixed;
@@ -718,6 +810,100 @@
   font-weight: 900;
   letter-spacing: -0.04em;
   margin: 1.5rem 0;
+}
+
+/* ══════ WEATHER SYSTEM ══════ */
+.weather-overlay-system {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Snow (Dark Theme) */
+.snowflake {
+  position: absolute;
+  top: -10px;
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  to { transform: translateY(100vh); }
+}
+
+.snowflake:nth-child(odd) { width: 2px; height: 2px; opacity: 0.5; }
+.snowflake:nth-child(3n) { animation-duration: 10s; left: 10%; }
+.snowflake:nth-child(3n+1) { animation-duration: 12s; left: 30%; }
+.snowflake:nth-child(3n+2) { animation-duration: 8s; left: 50%; }
+.snowflake:nth-child(4n) { animation-duration: 15s; left: 70%; }
+.snowflake:nth-child(4n+1) { animation-duration: 11s; left: 90%; }
+
+.festive-ornament {
+  position: absolute;
+  bottom: 10%;
+  z-index: 2;
+  filter: drop-shadow(0 0 20px rgba(var(--color-primary-rgb), 0.2));
+  animation: floatOrnament 4s ease-in-out infinite;
+}
+
+.festive-ornament.left { left: 5%; }
+.festive-ornament.right { right: 5%; animation-delay: 2s; }
+
+@keyframes floatOrnament {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(10deg); }
+}
+
+/* Rain (Solar Theme) */
+.raindrop {
+  position: absolute;
+  width: 1px;
+  height: 20px;
+  background: rgba(203, 75, 22, 0.4);
+  animation: rainfall 0.8s linear infinite;
+}
+
+@keyframes rainfall {
+  0% { transform: translateY(-100px); }
+  100% { transform: translateY(100vh); }
+}
+
+.raindrop:nth-child(5n) { left: 5%; animation-delay: 0s; }
+.raindrop:nth-child(5n+1) { left: 25%; animation-delay: 0.2s; }
+.raindrop:nth-child(5n+2) { left: 45%; animation-delay: 0.4s; }
+.raindrop:nth-child(5n+3) { left: 65%; animation-delay: 0.1s; }
+.raindrop:nth-child(5n+4) { left: 85%; animation-delay: 0.3s; }
+
+/* Sun (Light Theme) */
+.sun-container {
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(255,230,0,0.15) 0%, transparent 70%);
+  z-index: 1;
+  animation: rotateSun 20s linear infinite;
+}
+
+@keyframes rotateSun {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Hackathon Section Styles */
+.hackathon-grid .premium-card {
+  border-left: 4px solid var(--color-primary);
+  background: var(--color-bg-panel);
+}
+
+.hackathon-grid .premium-card:hover {
+  background: rgba(var(--color-primary-rgb), 0.05);
 }
 
 .cta-button-premium {

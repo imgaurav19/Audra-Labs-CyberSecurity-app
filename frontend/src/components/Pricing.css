@@ -47,11 +47,11 @@
 }
 
 .card-header h3 {
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 1.2rem;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--color-text-muted);
+  letter-spacing: 0.15em;
+  color: var(--color-primary);
   margin: 0 0 1.5rem 0;
   font-family: 'Share Tech Mono', monospace;
 }
@@ -64,21 +64,24 @@
 }
 
 .price {
-  font-size: 4rem;
+  font-size: 4.5rem;
   font-weight: 900;
   letter-spacing: -0.05em;
   color: var(--color-text);
+  font-family: 'Inter', sans-serif;
 }
 
 .period {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   color: var(--color-text-muted);
+  font-weight: 700;
 }
 
 .card-header p {
-  color: var(--color-text-muted);
-  font-size: 1.05rem;
-  line-height: 1.6;
+  color: var(--color-text);
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.5;
   margin-bottom: 3rem;
   min-height: 60px;
 }
@@ -97,11 +100,12 @@
 .card-features li {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
   color: var(--color-text);
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 .check-icon {

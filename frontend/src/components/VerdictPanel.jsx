@@ -8,7 +8,12 @@ export default function VerdictPanel({ result }) {
 
   if (!result) return null;
 
-  const { verdict, confidenceScore, summary, suspiciousRegions = [], techniques = [], recommendations } = result;
+  const { verdict, confidence, reason, flags = [], nutritionalAnalysis } = result;
+  
+  // Backward compatibility / Mapping
+  const confidenceScore = confidence;
+  const summary = reason;
+  const techniques = flags;
 
   const handleListen = () => {
     if (isSpeaking) {
@@ -17,35 +22,72 @@ export default function VerdictPanel({ result }) {
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(summary);
+    let speechText = `Forensic report for operative Gaurav. ${summary}`;
+    if (result.nutritionalAnalysis?.isFood) {
+      speechText += `. Nutritional intelligence confirmed. This media contains approximately ${result.nutritionalAnalysis.estimatedCalories}. ${result.nutritionalAnalysis.whyIsGood}.`;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(speechText);
+    
+    // Find American Female voice - more robust selection
+    const voices = window.speechSynthesis.getVoices();
+    const usFemaleVoice = voices.find(v => (v.lang === 'en-US' || v.lang === 'en_US') && (v.name.toLowerCase().includes('samantha') || v.name.toLowerCase().includes('zira') || v.name.toLowerCase().includes('female')));
+    if (usFemaleVoice) utterance.voice = usFemaleVoice;
+
     utterance.onend = () => setIsSpeaking(false);
-    utterance.rate = 0.9; // Slightly slower for 'forensic' feel
-    utterance.pitch = 0.8; // Lower pitch for authority
+    utterance.rate = 1.0; 
+    utterance.pitch = 1.0; 
     window.speechSynthesis.speak(utterance);
     setIsSpeaking(true);
   };
 
+  // Auto-speak disabled to prevent render interruption
+  React.useEffect(() => {
+    return () => {
+      window.speechSynthesis.cancel();
+    };
+  }, []);
+
   const getVerdictDetails = (v) => {
     switch (v) {
-      case 'MANIPULATED':
-      case 'LIKELY MANIPULATED':
-        return { icon: ShieldAlert, color: 'var(--color-danger)', text: v };
-      case 'AUTHENTIC':
-      case 'LIKELY AUTHENTIC':
-        return { icon: CheckCircle, color: 'var(--color-success)', text: v };
+      case 'FAKE':
+        return {
+          icon: ShieldAlert,
+          color: 'var(--color-danger)',
+          text: '❌ THIS IMAGE LOOKS FAKE',
+          subtitle: 'Signs of editing or AI generation detected'
+        };
+      case 'REAL':
+        return {
+          icon: CheckCircle,
+          color: 'var(--color-success)',
+          text: '✅ THIS IMAGE LOOKS REAL',
+          subtitle: 'No signs of editing found'
+        };
       default:
-        return { icon: HelpCircle, color: 'var(--color-warning)', text: 'INCONCLUSIVE' };
+        return {
+          icon: HelpCircle,
+          color: 'var(--color-warning)',
+          text: '⚠️ NOT SURE',
+          subtitle: 'Some suspicious signs — verify manually'
+        };
     }
   };
 
-  const { icon: Icon, color, text } = getVerdictDetails(verdict);
+  const { icon: Icon, color, text, subtitle } = getVerdictDetails(verdict);
+
+  // Label for gauge context
+  const gaugeLabel = verdict === 'FAKE' ? 'suspicious' : verdict === 'REAL' ? 'genuine' : 'uncertain';
 
   return (
     <div className="verdict-panel">
       <div className="verdict-header" style={{ borderColor: color }}>
         <div className="verdict-title">
           <Icon size={32} color={color} />
-          <h2 style={{ color }}>{text}</h2>
+          <div>
+            <h2 style={{ color }}>{text}</h2>
+            <p className="verdict-subtitle">{subtitle}</p>
+          </div>
         </div>
       </div>
 
@@ -53,25 +95,54 @@ export default function VerdictPanel({ result }) {
         <div className="gauge-container card">
           <h3>AI Confidence</h3>
           <ConfidenceGauge score={confidenceScore} verdict={verdict} />
+          <p className="gauge-label">{Math.round(confidenceScore)}% {gaugeLabel}</p>
         </div>
 
         <div className="summary-container card">
           <div className="summary-header">
-            <h3>Forensic Summary</h3>
+            <h3>Summary</h3>
             <button 
               className={`voice-btn ${isSpeaking ? 'active' : ''}`} 
               onClick={handleListen}
-              title={isSpeaking ? "Stop Reading" : "Listen to Analysis"}
+              style={{ background: isSpeaking ? 'var(--color-danger)' : 'var(--color-primary)', color: '#000' }}
             >
               {isSpeaking ? <X size={14} /> : <Volume2 size={14} />}
-              <span>{isSpeaking ? "STOP" : "LISTEN"}</span>
+              <span>{isSpeaking ? "MUTE" : "UNMUTE VOICE"}</span>
             </button>
           </div>
-          <p className="summary-text">{summary}</p>
+          <p className="summary-text" style={{ marginBottom: '2.5rem' }}>{summary}</p>
           
+          {result.nutritionalAnalysis?.isFood && (
+            <div className="nutrition-pane-premium" style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(var(--color-primary-rgb), 0.05)', borderRadius: '16px', border: '1px solid rgba(var(--color-primary-rgb), 0.2)' }}>
+              <h4 style={{ color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                <Activity size={18} /> NUTRITIONAL INTELLIGENCE
+              </h4>
+              <div style={{ fontSize: '1.5rem', fontWeight: '900', marginBottom: '1rem', fontFamily: 'Share Tech Mono' }}>
+                {result.nutritionalAnalysis.estimatedCalories}
+              </div>
+              <p style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1.5rem', color: 'var(--color-text)' }}>
+                {result.nutritionalAnalysis.whyIsGood}
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <div style={{ fontSize: '0.75rem', opacity: 0.6, textTransform: 'uppercase', marginBottom: '0.5rem' }}>Pros</div>
+                  {result.nutritionalAnalysis.pros.map((pro, i) => (
+                    <div key={i} style={{ color: 'var(--color-success)', fontSize: '0.9rem', fontWeight: '700', marginBottom: '0.25rem' }}>+ {pro}</div>
+                  ))}
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.75rem', opacity: 0.6, textTransform: 'uppercase', marginBottom: '0.5rem' }}>Cons</div>
+                  {result.nutritionalAnalysis.cons.map((con, i) => (
+                    <div key={i} style={{ color: 'var(--color-danger)', fontSize: '0.9rem', fontWeight: '700', marginBottom: '0.25rem' }}>- {con}</div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
           {techniques.length > 0 && (
-            <div className="techniques-detected">
-              <h4>Detected Traits:</h4>
+            <div className="techniques-detected" style={{ marginTop: '3.5rem' }}>
+              <h4 style={{ marginBottom: '1.5rem', color: 'var(--color-primary)', letterSpacing: '0.1em' }}>DETECTED_ANOMALOUS_TRAITS:</h4>
               <div className="tags">
                 {techniques.map((tech, idx) => (
                   <span key={idx} className="tag">{tech}</span>
@@ -81,23 +152,6 @@ export default function VerdictPanel({ result }) {
           )}
         </div>
       </div>
-
-      {suspiciousRegions.length > 0 && (
-        <div className="regions-container card">
-          <h3><AlertTriangle size={18} /> Flagged Regions</h3>
-          <ul className="regions-list">
-            {suspiciousRegions.map((region, idx) => (
-              <li key={idx} className={`region-item severity-${region.severity}`}>
-                <div className="region-header">
-                  <span className="region-name">{region.region}</span>
-                  <span className="severity-badge">{region.severity}</span>
-                </div>
-                <p className="region-desc">{region.description}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
 
       {recommendations && (
         <div className="recommendations-container card">

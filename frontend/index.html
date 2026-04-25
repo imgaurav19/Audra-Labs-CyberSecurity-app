@@ -71,6 +71,25 @@
       </div>
     </div>
 
+    <!-- THE THREAT SECTION -->
+    <div class="threat-section">
+      <div class="threat-content">
+        <div class="threat-text">
+          <div class="threat-badge">CRITICAL_ALERT</div>
+          <h2 class="threat-title">The Information War is Real</h2>
+          <p class="threat-desc">In the last 12 months, deepfake attacks have increased by 900%. Seeing is no longer believing. A single synthetic video can collapse a market or swing an election. The world needs a forensic defense system.</p>
+        </div>
+        <div class="threat-visual">
+          <div class="glitch-box">
+            <div class="glitch-layer"></div>
+            <div class="glitch-layer"></div>
+            <div class="glitch-layer"></div>
+            <div class="threat-overlay">DATA_CORRUPTION_DETECTED</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- NOTION STYLE DOCUMENTATION SECTION -->
     <div class="notion-section">
       <div class="notion-card">
@@ -127,6 +146,84 @@
           </div>
           <h3>03: Interpreting Verdicts</h3>
           <p>Read the final forensic reports and utilize the metadata extraction features.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- GLOBAL SCALE SECTION -->
+    <div class="global-scale">
+      <div class="global-header">
+        <div class="global-label">OPERATIONAL_REACH</div>
+        <h2>Global Media Hub Monitoring</h2>
+        <p>Live intelligence streams from the world's primary information nodes.</p>
+      </div>
+      <div class="global-grid">
+        <div class="city-card">
+          <img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&q=80&w=800" alt="New York">
+          <div class="city-info">
+            <span class="city-name">NEW YORK</span>
+            <span class="city-status">NODE_ACTIVE</span>
+          </div>
+        </div>
+        <div class="city-card">
+          <img src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&q=80&w=800" alt="London">
+          <div class="city-info">
+            <span class="city-name">LONDON</span>
+            <span class="city-status">NODE_ACTIVE</span>
+          </div>
+        </div>
+        <div class="city-card">
+          <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&q=80&w=800" alt="Tokyo">
+          <div class="city-info">
+            <span class="city-name">TOKYO</span>
+            <span class="city-status">NODE_ACTIVE</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fh-team">
+      <div class="fh-tut-header" style="margin-top: 4rem;">
+        <h2>The Operatives Behind Audra Labs</h2>
+        <p>Our intelligence team securing the information ecosystem.</p>
+      </div>
+      <div class="fh-tut-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="fh-team-card">
+          <div class="fh-team-avatar" style="background-image: url('https://picsum.photos/seed/arghya/400/400')"></div>
+          <h3>Arghya</h3>
+          <p>Intelligence Engineer</p>
+        </div>
+        <div class="fh-team-card">
+          <div class="fh-team-avatar" style="background-image: url('https://picsum.photos/seed/shadman/400/400')"></div>
+          <h3>SHADMAN</h3>
+          <p>Security Operative</p>
+        </div>
+        <div class="fh-team-card">
+          <div class="fh-team-avatar" style="background-image: url('https://picsum.photos/seed/gaurav/400/400')"></div>
+          <h3>Gaurav</h3>
+          <p>Terminal Architect</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MISSION SECTION -->
+    <div class="mission-section">
+      <div class="mission-container">
+        <div class="mission-label">[ MISSION_STATEMENT ]</div>
+        <h2 class="mission-title">Defending the Information Ecosystem</h2>
+        <p class="mission-desc">In a world where AI can fabricate reality, truth remains the ultimate currency. Audra Labs is the defensive layer for truth, ensuring that every piece of media can be verified, authenticated, and trusted.</p>
+        <div class="mission-stats">
+          <div class="mission-stat">
+            <span class="stat-value">900%</span>
+            <span class="stat-label">Rise in Deepfake Attacks</span>
+          </div>
+          <div class="mission-stat">
+            <span class="stat-value">0.04ms</span>
+            <span class="stat-label">Analysis Latency</span>
+          </div>
+          <div class="mission-stat">
+            <span class="stat-value">∞</span>
+            <span class="stat-label">Verified Trust</span>
+          </div>
         </div>
       </div>
     </div>
@@ -311,7 +408,7 @@
 
   // Smooth transition from Generator to Login
 
-  const API_URL = 'http://localhost:5005/api/auth';
+  const API_URL = 'http://localhost:5001/api/auth';
 
   async function handleCustomRegister() {
     const codename = document.getElementById('reg-codename').value;

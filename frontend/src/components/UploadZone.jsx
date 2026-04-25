@@ -7,6 +7,7 @@ export default function UploadZone({ onAnalyze }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [error, setError] = useState('');
+  const [inquiry, setInquiry] = useState('');
 
   const handleDrag = useCallback((e) => {
     e.preventDefault();
@@ -83,7 +84,7 @@ export default function UploadZone({ onAnalyze }) {
 
   const handleAnalyzeClick = () => {
     if (selectedFile) {
-      onAnalyze(selectedFile, previewUrl);
+      onAnalyze(selectedFile, previewUrl, inquiry);
     }
   };
 
@@ -131,6 +132,41 @@ export default function UploadZone({ onAnalyze }) {
             <span className="file-name">{selectedFile.name}</span>
             <span className="file-size">{(selectedFile.size / (1024 * 1024)).toFixed(2)} MB</span>
           </div>
+
+          <div className="inquiry-container" style={{ margin: '2rem 0', width: '100%' }}>
+            <div className="tactical-label" style={{ marginBottom: '0.75rem', fontSize: '0.75rem', letterSpacing: '0.15em' }}>FORENSIC_OBJECTIVE</div>
+            <input 
+              type="text" 
+              placeholder="e.g. 'How many calories?' or 'Is this real?'" 
+              value={inquiry}
+              onChange={(e) => setInquiry(e.target.value)}
+              style={{
+                width: '100%',
+                background: 'rgba(0,0,0,0.05)',
+                border: '1px solid var(--color-border)',
+                borderRadius: '12px',
+                padding: '1.25rem',
+                color: 'var(--color-text)',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '1rem',
+                fontWeight: '600',
+                outline: 'none',
+                transition: 'all 0.3s ease',
+                boxSizing: 'border-box'
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = 'var(--color-primary)';
+                e.target.style.background = 'rgba(var(--color-primary-rgb), 0.02)';
+                e.target.style.boxShadow = '0 0 15px rgba(var(--color-primary-rgb), 0.1)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'var(--color-border)';
+                e.target.style.background = 'rgba(0,0,0,0.05)';
+                e.target.style.boxShadow = 'none';
+              }}
+            />
+          </div>
+
           <button className="analyze-btn" onClick={handleAnalyzeClick}>
             Run Forensic Analysis
           </button>

@@ -5,28 +5,28 @@ import './Pricing.css';
 
 const tiers = [
   {
-    name: 'Fact-Checker',
+    name: 'Operative',
     price: 'Free',
-    description: 'Essential tools for independent verification.',
-    features: ['100 media scans/month', 'Basic forensic summaries', 'Community support', 'Standard resolution'],
-    buttonText: 'Start Verifying',
+    description: 'Essential forensic tools for independent researchers.',
+    features: ['50 forensic scans/mo', 'Basic metadata extraction', 'Community intelligence', 'Standard resolution'],
+    buttonText: 'Initialize Access',
     highlighted: false
   },
   {
-    name: 'Newsroom',
-    price: '$99',
+    name: 'Agency',
+    price: '₹7,999',
     period: '/month',
-    description: 'Advanced intelligence for editorial teams.',
-    features: ['Unlimited media scans', 'Deep-dive AI analysis', 'Priority API access', 'High-res extraction', 'Team collaboration'],
-    buttonText: 'Upgrade to Newsroom',
+    description: 'Professional intelligence for editorial teams.',
+    features: ['Unlimited forensic scans', 'Deep-dive neural analysis', 'Priority API bandwidth', '4K high-res extraction', 'Multi-operative sync'],
+    buttonText: 'Deploy Agency Plan',
     highlighted: true
   },
   {
-    name: 'Enterprise API',
+    name: 'Government',
     price: 'Custom',
-    description: 'Scalable integration for platforms.',
-    features: ['Dedicated infrastructure', 'Custom AI model tuning', 'SLA guarantees', '24/7 dedicated support'],
-    buttonText: 'Contact Sales',
+    description: 'Scalable infrastructure for global platforms.',
+    features: ['Dedicated forensic clusters', 'Custom AI logic tuning', 'Mission-critical SLAs', '24/7 tactical support'],
+    buttonText: 'Contact Command',
     highlighted: false
   }
 ];

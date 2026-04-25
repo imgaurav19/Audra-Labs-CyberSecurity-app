@@ -33,16 +33,10 @@
 }
 
 .verdict-grid {
-  display: grid;
-  grid-template-columns: 400px 1fr;
-  gap: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
   width: 100%;
-}
-
-@media (max-width: 768px) {
-  .verdict-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 .card {
@@ -51,6 +45,8 @@
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .card h3 {
@@ -211,4 +207,23 @@
   0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.4); }
   70% { box-shadow: 0 0 0 10px rgba(255, 59, 48, 0); }
   100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
+}
+
+/* Verdict subtitle */
+.verdict-subtitle {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  letter-spacing: 0;
+}
+
+/* Gauge context label */
+.gauge-label {
+  text-align: center;
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  letter-spacing: 0.02em;
 }

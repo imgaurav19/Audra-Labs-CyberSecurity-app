@@ -26,7 +26,7 @@ export default function SectionWrapper({ children, className = '', id = '' }) {
     <section
       ref={sectionRef}
       id={id}
-      className={`section-container ${className} ${isVisible ? 'visible' : ''}`}
+      className={`section-container ${className} ${isVisible ? 'visible' : ''} ${className.includes('full-width') ? 'full-width' : ''}`}
     >
       {children}
     </section>

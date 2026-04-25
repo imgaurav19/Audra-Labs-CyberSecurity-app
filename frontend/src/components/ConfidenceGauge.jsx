@@ -24,13 +24,11 @@ export default function ConfidenceGauge({ score, verdict }) {
     return () => clearInterval(timer);
   }, [score]);
 
-  // Determine color based on verdict rather than raw score
-  // If it's authentic, confidence means we are confident it's REAL (green)
-  // If it's manipulated, confidence means we are confident it's FAKE (red)
+  // Use the human-friendly verdict labels
   let color = 'var(--color-warning)';
-  if (verdict.includes('AUTHENTIC')) {
+  if (verdict === 'REAL') {
     color = 'var(--color-success)';
-  } else if (verdict.includes('MANIPULATED')) {
+  } else if (verdict === 'FAKE') {
     color = 'var(--color-danger)';
   }
 

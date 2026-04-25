@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import LandingPage from './components/LandingPage';
 import UploadZone from './components/UploadZone';
@@ -6,93 +6,168 @@ import VerdictPanel from './components/VerdictPanel';
 import { Loader2 } from 'lucide-react';
 import './App.css';
 
+// Map backend verdicts to human-friendly labels
+function humanizeVerdict(verdict) {
+  if (!verdict) return 'NOT SURE';
+  const v = verdict.toUpperCase();
+  if (v.includes('MANIPULATED')) return 'FAKE';
+  if (v.includes('AUTHENTIC') || v === 'VERIFIED') return 'REAL';
+  return 'NOT SURE';
+}
+
 function App() {
   const [mediaUrl, setMediaUrl] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const [analysisLogs, setAnalysisLogs] = useState([]);
+  const [history, setHistory] = useState([]);
 
-  const handleAnalyze = async (file, previewUrl) => {
+  // Load history on mount
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const auth = JSON.parse(localStorage.getItem('audra_auth') || '{}');
+        const config = auth.token ? { headers: { Authorization: `Bearer ${auth.token}` } } : {};
+
+        if (!auth.token) throw new Error('No auth');
+
+        const res = await axios.get('http://localhost:5001/api/history', config);
+        if (res.data && Array.isArray(res.data)) {
+          setHistory(res.data);
+        }
+      } catch (err) {
+        console.warn('MongoDB history unavailable or not authenticated, using local storage');
+        const saved = localStorage.getItem('audra_history');
+        if (saved) {
+          try { setHistory(JSON.parse(saved)); } catch (e) { }
+        }
+      }
+    };
+    fetchHistory();
+  }, []);
+
+  // Helper to create tiny base64 thumbnail
+  const createThumbnail = (url) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 200;
+        const scale = MAX_WIDTH / img.width;
+        canvas.width = MAX_WIDTH;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', 0.5));
+      };
+      img.onerror = () => resolve(null);
+      img.src = url;
+    });
+  };
+
+  const handleAnalyze = async (file, previewUrl, userInquiry = '') => {
+    setResult(null); // Clear previous results immediately
     setMediaUrl(previewUrl);
     setIsAnalyzing(true);
     setError('');
-    setResult(null);
-    setAnalysisLogs(["Initiating multi-layer forensic ingest..."]);
+    setAnalysisLogs([
+      "Initiating multi-layer forensic ingest...",
+      userInquiry ? `Targeting objective: "${userInquiry}"` : "Initializing generalized forensic scan..."
+    ]);
 
     const formData = new FormData();
     formData.append('media', file);
+    if (userInquiry) formData.append('inquiry', userInquiry);
+
+    // Animate log steps while waiting for the real API
+    const logSteps = [
+      "Running Error Level Analysis (ELA)...",
+      "Calculating compression variance map...",
+      "Scanning for Neural Signatures (DALL-E/Midjourney)...",
+      "Verifying metadata hash integrity...",
+      "Analyzing lighting & shadow vectors...",
+      "Generating final forensic verdict..."
+    ];
+
+    let stepIdx = 0;
+    const logInterval = setInterval(() => {
+      if (stepIdx < logSteps.length) {
+        setAnalysisLogs(prev => [...prev, logSteps[stepIdx]]);
+        stepIdx++;
+      }
+    }, 1500); // Slower, more deliberate forensic feel
 
     try {
-      const response = await axios.post('http://localhost:5005/api/analyze', formData, {
+      const response = await axios.post('http://localhost:5001/api/analyze', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      setResult(response.data);
-    } catch (err) {
-      console.warn('Backend offline. Simulation mode active.');
-      
-      const logSteps = [
-        "Running Error Level Analysis (ELA)...",
-        "Calculating compression variance map...",
-        "Scanning for Neural Signatures (DALL-E/Midjourney)...",
-        "Verifying metadata hash integrity...",
-        "Analyzing lighting & shadow vectors...",
-        "Generating final forensic verdict..."
-      ];
 
-      for (let i = 0; i < logSteps.length; i++) {
-        await new Promise(r => setTimeout(r, 400));
-        setAnalysisLogs(prev => [...prev, logSteps[i]]);
+      // Minimum wait of 10s for dramatic forensic build-up
+      await new Promise(resolve => setTimeout(resolve, 10000));
+
+      clearInterval(logInterval);
+      // Show remaining log steps instantly
+      setAnalysisLogs(prev => [...prev, ...logSteps.slice(stepIdx)]);
+
+      // Map the verdict to human-friendly label
+      const data = response.data;
+      data.verdict = humanizeVerdict(data.verdict);
+      
+      // Ensure backward compatibility mapping
+      data.confidenceScore = data.confidence;
+      data.summary = data.reason;
+      data.techniques = data.flags;
+
+      // Save to history
+      const thumb = await createThumbnail(previewUrl);
+      const newEntry = {
+        thumbnail: thumb,
+        verdict: data.verdict,
+        score: Math.round(data.confidenceScore),
+        summary: data.summary,
+        fullResult: data
+      };
+
+      try {
+        const auth = JSON.parse(localStorage.getItem('audra_auth') || '{}');
+        if (!auth.token) throw new Error('No token');
+
+        const historyRes = await axios.post('http://localhost:5001/api/history', newEntry, {
+          headers: { Authorization: `Bearer ${auth.token}` }
+        });
+        const updatedHistory = [historyRes.data, ...history].slice(0, 50);
+        setHistory(updatedHistory);
+      } catch (historyErr) {
+        console.warn('Failed to save to MongoDB history, using local storage fallback');
+        newEntry.id = Date.now();
+        newEntry.date = new Date().toISOString();
+        const updatedHistory = [newEntry, ...history].slice(0, 20);
+        setHistory(updatedHistory);
+        localStorage.setItem('audra_history', JSON.stringify(updatedHistory));
       }
 
-      // Dynamic Forensic Simulation Engine (DEMO MODE: always shows MANIPULATED for pitch)
-      const isLikelyFake = true; // Set to Math.random() > 0.3 for random mode
-      const dynamicScore = (88 + Math.random() * 9).toFixed(1); // 88-97% range
+      // ATOMIC REVEAL: Hand over from terminal to final report with zero gap
+      // Map the verdict to human-friendly label and ensure mapping
+      const finalData = { ...data };
+      finalData.confidenceScore = data.confidence || data.confidenceScore;
+      finalData.summary = data.reason || data.summary;
+      finalData.techniques = data.flags || data.techniques;
       
-      const profiles = [
-        {
-          verdict: "MANIPULATED",
-          summary: `ELA scan revealed significant pixel variance in the central facial region. Lighting vectors show a ${ (10 + Math.random() * 10).toFixed(1) }° deviation from the established environmental light source.`,
-          techniques: ["Neural Signature Match", "Lighting Inconsistency"],
-          regions: [
-            { region: "Facial T-Zone", severity: "high", description: "Compression noise floor deviation detected." },
-            { region: "Shadow Geometry", severity: "medium", description: "Inconsistent shadow cast vectors." }
-          ]
-        },
-        {
-          verdict: "MANIPULATED",
-          summary: "GAN-specific neural signatures detected in texture gradients. Frequency analysis shows synthetic repeating patterns in complex backgrounds.",
-          techniques: ["Texture Gradient Scan", "Frequency Domain Analysis"],
-          regions: [
-            { region: "Background Gradients", severity: "high", description: "Synthetic repeating patterns detected." },
-            { region: "Edge Contrast", severity: "medium", description: "Unnatural sharpening artifacts on subject borders." }
-          ]
-        },
-        {
-          verdict: "VERIFIED",
-          summary: "No significant forensic anomalies detected. Metadata hash matches original acquisition profile. Lighting and shadow geometry are mathematically consistent with environmental light sources.",
-          techniques: ["Metadata Integrity Check", "Geometric Lighting Scan"],
-          regions: [
-            { region: "Global Canvas", severity: "low", description: "Consistent noise floor across all quadrants." }
-          ]
-        }
-      ];
+      // Stop logs first
+      clearInterval(logInterval);
+      
+      // Atomic state change: SET RESULT FIRST then DISABLE ANALYZING
+      setResult(finalData);
+      setIsAnalyzing(false);
 
-      const selectedProfile = isLikelyFake ? profiles[Math.floor(Math.random() * 2)] : profiles[2];
-      
-      const simulationResult = {
-        verdict: selectedProfile.verdict,
-        confidenceScore: isLikelyFake ? dynamicScore : (94 + Math.random() * 4).toFixed(1),
-        summary: selectedProfile.summary,
-        techniques: selectedProfile.techniques,
-        suspiciousRegions: selectedProfile.regions,
-        recommendations: isLikelyFake 
-          ? "Proceed with caution. Media exhibits signatures of advanced generative augmentation." 
-          : "Media appears authentic based on current forensic parameters."
-      };
-      
-      setResult(simulationResult);
-    } finally {
+    } catch (err) {
+      clearInterval(logInterval);
+      console.error('Analysis failed:', err);
+      setError(
+        err.response?.data?.error ||
+        'Could not reach the Audra Intelligence Engine. Make sure the backend server is running on port 5000.'
+      );
       setIsAnalyzing(false);
     }
   };
@@ -101,67 +176,99 @@ function App() {
     setMediaUrl(null);
     setResult(null);
     setError('');
+    setAnalysisLogs([]);
+  };
+
+  const loadHistoryItem = (item) => {
+    setResult(item.fullResult);
+    setMediaUrl(item.thumbnail); // Since we only saved the thumbnail, use it for preview
+    setError('');
+  };
+
+  const formatHistoryDate = (dateStr) => {
+    const date = new Date(dateStr);
+    const today = new Date();
+    const isToday = date.getDate() === today.getDate() && date.getMonth() === today.getMonth();
+    const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return isToday ? `Today ${timeStr}` : `${date.toLocaleDateString()} ${timeStr}`;
   };
 
   const LiveToolComponent = (
     <div className="live-tool">
-      {!mediaUrl && !isAnalyzing && (
-        <div className="fade-in">
-          <UploadZone onAnalyze={handleAnalyze} />
-        </div>
-      )}
-      {isAnalyzing && (
-        <div className="analyzing-section fade-in">
-          <div className="forensic-loader">
-            <div className="radar-pulse"></div>
-            <div className="terminal-log-container">
-              <div className="terminal-header">
-                <span className="dot"></span>
-                <span className="dot"></span>
-                <span className="dot"></span>
-                <span className="term-title">AUDRA_INTELLIGENCE_ENGINE.EXE</span>
-              </div>
-              <div className="terminal-body">
-                {analysisLogs.map((log, i) => (
-                  <div key={i} className="log-line">
-                    <span className="log-arrow">»</span> {log}
+      <div className="main-content-area">
+        {!mediaUrl && !isAnalyzing && (
+          <div className="fade-in">
+            <UploadZone onAnalyze={handleAnalyze} />
+          </div>
+        )}
+        {(isAnalyzing || result) && (
+          <div className="lab-active-area fade-in">
+            {isAnalyzing ? (
+              <div className="analyzing-section side-by-side-lab">
+                <div className="lab-visual-side">
+                  <div className="media-scan-container">
+                    {mediaUrl && (
+                      <div className="preview-main">
+                        <img src={mediaUrl} alt="Analyzing" />
+                        <div className="scan-beam-cinematic"></div>
+                      </div>
+                    )}
+                    <div className="scan-overlay-grid"></div>
                   </div>
-                ))}
-                <div className="log-cursor">_</div>
+                  <p className="analyzing-status-text">DEEP SCAN IN PROGRESS...</p>
+                </div>
+
+                <div className="lab-terminal-side">
+                  <div className="terminal-log-container-premium">
+                    <div className="terminal-header-tactical">
+                      <div className="window-controls">
+                        <span className="dot-red"></span>
+                        <span className="dot-yellow"></span>
+                        <span className="dot-green"></span>
+                      </div>
+                      <span className="term-title-bold">AUDRA_INTELLIGENCE_ENGINE.EXE</span>
+                    </div>
+                    <div className="terminal-body-forensic">
+                      {analysisLogs.map((log, i) => (
+                        <div key={i} className="log-line-tactical">
+                          <span className="log-time">[{new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}]</span>
+                          <span className="log-arrow-green">»</span> {log}
+                        </div>
+                      ))}
+                      <div className="log-cursor-blinking">_</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+            <div className="results-section fade-in" style={{ padding: '4rem 0', minHeight: '800px' }}>
+              <div className="results-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4rem' }}>
+                <h2 style={{ fontSize: '3rem', fontWeight: 900, letterSpacing: '-0.03em', color: 'var(--color-primary)', textTransform: 'uppercase' }}>FORENSIC_ANALYSIS_COMPLETED</h2>
+                <button className="reset-btn" onClick={handleReset} style={{ padding: '1rem 2.5rem', borderRadius: '16px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--color-border)', fontWeight: 800, fontSize: '1rem', color: 'var(--color-text)', cursor: 'pointer', letterSpacing: '0.1em' }}>NEW_SCAN</button>
+              </div>
+              <div className="results-content" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'start' }}>
+                <div className="media-preview-panel premium-card" style={{ borderRadius: '32px', overflow: 'hidden', border: '1px solid var(--color-border)', boxShadow: '0 60px 120px rgba(0,0,0,0.5)', background: '#000', position: 'sticky', top: '2rem' }}>
+                  <img src={mediaUrl} alt="Analyzed media" className="final-preview" style={{ width: '100%', height: 'auto', display: 'block' }} />
+                </div>
+                <div className="report-data-panel">
+                  <VerdictPanel result={result} />
+                </div>
               </div>
             </div>
-            <p className="analyzing-status">DEEP SCAN IN PROGRESS...</p>
+            )}
           </div>
-          {mediaUrl && <div className="preview-mini"><img src={mediaUrl} alt="Analyzing" /></div>}
-        </div>
-      )}
-      {error && (
-        <div className="error-section fade-in">
-          <div className="error-card premium-card">
-            <h3>Analysis Failed</h3>
-            <p>{error}</p>
-            <button className="reset-btn" onClick={handleReset}>Try Again</button>
-          </div>
-        </div>
-      )}
-      {result && !isAnalyzing && (
-        <div className="results-section fade-in">
-          <div className="results-header">
-            <h2>Forensic Report</h2>
-            <button className="reset-btn" onClick={handleReset}>Analyze New File</button>
-          </div>
-          <div className="results-content">
-            <div className="media-preview-panel premium-card">
-              <img src={mediaUrl} alt="Analyzed media" className="final-preview" />
-            </div>
-            <VerdictPanel result={result} />
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 
-  return <LandingPage toolComponent={LiveToolComponent} />;
+  return <LandingPage
+    toolComponent={LiveToolComponent}
+    history={history}
+    loadHistoryItem={loadHistoryItem}
+    setHistory={setHistory}
+    formatHistoryDate={formatHistoryDate}
+  />;
 }
 
 export default App;
