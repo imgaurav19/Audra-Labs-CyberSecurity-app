@@ -1,7 +1,7 @@
 # Audra-Labs-CyberSecurity-app
 
 # About
-A modern React Native cybersecurity platform designed to help users learn security concepts, stay informed about threats, and access cybersecurity tools through an intuitive mobile experience.
+Audra Labs AI Image Detector is a modern platform that helps users determine whether an image is AI-generated or authentic. Using advanced machine learning and image forensics techniques, the application analyzes uploaded images and provides confidence scores, authenticity indicators, and detailed insights.
 
 <img width="1710" height="1112" alt="Screenshot 2026-06-12 at 9 42 24 AM" src="https://github.com/user-attachments/assets/b9ffb050-b785-4d66-a7d1-89331bd6ec4e" />
 <img width="1710" height="1112" alt="Screenshot 2026-06-12 at 9 41 28 AM" src="https://github.com/user-attachments/assets/e3d627ea-68ed-4e00-ba76-0baf0a05fdba" />
