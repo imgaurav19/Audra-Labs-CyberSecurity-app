@@ -3,9 +3,9 @@
 # About
 Audra Labs AI Image Detector is a modern platform that helps users determine whether an image is AI-generated or authentic. Using advanced machine learning and image forensics techniques, the application analyzes uploaded images and provides confidence scores, authenticity indicators, and detailed insights.
 
-<img width="1710" height="1112" alt="Screenshot 2026-06-12 at 9 42 24 AM" src="https://github.com/user-attachments/assets/b9ffb050-b785-4d66-a7d1-89331bd6ec4e" />
 <img width="1710" height="1112" alt="Screenshot 2026-06-12 at 9 41 28 AM" src="https://github.com/user-attachments/assets/e3d627ea-68ed-4e00-ba76-0baf0a05fdba" />
 <img width="1710" height="1112" alt="Screenshot 2026-06-12 at 9 41 47 AM" src="https://github.com/user-attachments/assets/aa0cbfa4-0157-4f03-88cb-2077b8de3787" />
+<img width="1710" height="1112" alt="Screenshot 2026-06-12 at 9 42 24 AM" src="https://github.com/user-attachments/assets/b9ffb050-b785-4d66-a7d1-89331bd6ec4e" />
 
 
 ## Features
