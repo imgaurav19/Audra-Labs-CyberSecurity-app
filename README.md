@@ -1,6 +1,6 @@
 # Audra-Labs-CyberSecurity-app
 
-#About
+# About
 A modern React Native cybersecurity platform designed to help users learn security concepts, stay informed about threats, and access cybersecurity tools through an intuitive mobile experience.
 
 <img width="1710" height="1112" alt="Screenshot 2026-06-12 at 9 42 24 AM" src="https://github.com/user-attachments/assets/b9ffb050-b785-4d66-a7d1-89331bd6ec4e" />
